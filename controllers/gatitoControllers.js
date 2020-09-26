@@ -1,19 +1,43 @@
 const Gatito = require('../models/gatitos');
 
-exports.getGatitos = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Ruta aun no implementada GET GatitoS',
-  });
+exports.getGatitos = async (req, res) => {
+  try {
+    const gatitos = await Gatito.find()
+    res.status(201).json({
+      status: 'success',
+      data: {
+        gatitos
+      }
+    })
+
+  } catch(err) {
+    res.status(400).json({
+      status: 'fail',
+      err: err
+    })
+  }
 };
 
-exports.getGatito = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Ruta aun no implementada GET Gatito',
-  });
-};
+exports.getGatito = async (req, res) => {
+  try {
+    // metodo de mongo
+    // const gatitos = await Gatito.findOne({_id: req.params.id})
+    // metodo de mongoose
+    const gatitos = await Gatito.findById(req.params.id)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        gatitos
+      }
+    })
 
+  } catch(err) {
+    res.status(400).json({
+      status: 'fail',
+      err: err
+    })
+  }
+};
 // exports.postGatito = (req, res) => {
 //   const gatito = new Gatito(req.body)
   
@@ -55,19 +79,55 @@ exports.postGatito = async (req, res) => {
   }
 };
 
-
-  
-
-exports.deleteGatito = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Ruta aun no implementada DELETE Gatito',
+exports.deleteGatito = async (req, res) => {
+try {
+  // este es el metodo de mongoose, equivalente 
+  // await Gatito.findByIdAndDelete(req.params.id)
+  await Gatito.deleteOne({ _id: req.params.id });
+ res.status(200).json({
+   status: 'success',
+   data: null
+ })
+}
+catch(err) {
+  res.status(400).json({
+    status: 'fail',
+    message: 'No se pudo borrar al gato',
   });
+}
+
 };
 
-exports.putGatito = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Ruta aun no implementada PUT Gatito',
+exports.putGatito = async (req, res) => {
+  try {
+    const gatito = await Gatito.replaceOne({_id: req.params.id}, req.body)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        gatito
+      }
+    })
+  } catch(err) {
+  res.status(400).json({
+    status: 'fail',
+    message: err,
   });
+}
+};
+
+exports.patchGatito = async (req, res) => {
+  try {
+    const gatito = await Gatito.findByIdAndUpdate(req.params.id, req.body)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        gatito
+      }
+    })
+  } catch(err) {
+  res.status(400).json({
+    status: 'fail',
+    message: err,
+  });
+}
 };
